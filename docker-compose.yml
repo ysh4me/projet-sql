@@ -1,0 +1,19 @@
+version: '3.1'
+
+services:
+  db:
+    container_name: db_postgres
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - ./init_database.sql:/init_database.sql
+      - ./niveau_1/:/niveau_1
+      - ./niveau_2/:/niveau_2
+      - ./niveau_3/:/niveau_3
+      - ./niveau_4/:/niveau_4
+      - data:/var/lib/postgresql/data
+
+volumes:
+  data:
