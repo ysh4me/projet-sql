@@ -9,10 +9,7 @@ services:
       - POSTGRES_PASSWORD=password
     volumes:
       - ./init_database.sql:/init_database.sql
-      - ./niveau_1/:/niveau_1
-      - ./niveau_2/:/niveau_2
-      - ./niveau_3/:/niveau_3
-      - ./niveau_4/:/niveau_4
+      - ./requetes_niveaux/:/requetes_niveaux
       - data:/var/lib/postgresql/data
 
 volumes:
