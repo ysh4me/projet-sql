@@ -20,10 +20,7 @@ docker compose exec db psql -U postgres
 ---
 ## Structure du projet
 `/init_database.sql` → Script SQL pour créer la base de données et ses tables
-`/niveau_1/` → Contient les requêtes SQL pour le niveau 1
-`/niveau_2/` → Contient les requêtes SQL pour le niveau 2
-`/niveau_3/` → Contient les requêtes SQL pour le niveau 3
-`/niveau_4/` → Contient les requêtes SQL pour le niveau 4
+`/src/` → Contient les requêtes SQL pour le niveau 1, 2, 3 et 4
 
 ---
 ## Commandes utiles PostgreSQL
@@ -49,6 +46,6 @@ docker compose exec db psql -U postgres
 
 ### Exécuter un script SQL :
 ```sh
-psql -U postgres -d db_ratp_sncf -f exercices/niveau_1/nomdufichier.sql
+psql -U postgres -d db_ratp_sncf -f exercices/src/level_X.sql
 ```
 
