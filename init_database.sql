@@ -16,7 +16,7 @@ CREATE TABLE stations (
 CREATE TABLE lignes (
     id SERIAL PRIMARY KEY,
     nom VARCHAR(32) NOT NULL,
-    moyen_transport moyen_transport NOT NULL,
+    type moyen_transport NOT NULL,
     capacite_max INT NOT NULL
 );
 
@@ -64,7 +64,7 @@ CREATE TABLE dossiers_client (
 
 CREATE TABLE supports (
     id SERIAL PRIMARY KEY,
-    identifiant VARCHAR(12) NOT NULL UNIQUE,
+    identifiant VARCHAR(20) NOT NULL UNIQUE,
     date_achat TIMESTAMP NOT NULL
 );
 
