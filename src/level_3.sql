@@ -24,22 +24,45 @@ FROM validations v WHERE v.date_heure_validation >= NOW() - INTERVAL '12 months'
 GROUP BY jour_semaine ORDER BY ARRAY_POSITION(ARRAY['LUNDI', 'MARDI', 'MERCREDI', 'JEUDI', 'VENDREDI', 'SAMEDI', 'DIMANCHE'], jour_semaine);
 
 -- 5
-CREATE OR REPLACE VIEW taux_remplissage_lignes AS
-WITH moyenne_passagers AS (
-    SELECT a.id_ligne, COUNT(v.id) / 365.0 AS passagers_par_jour
-    FROM validations v
-    JOIN arrets a ON v.id_station = a.id_station
-    WHERE v.date_heure_validation >= NOW() - INTERVAL '1 year'
-    GROUP BY a.id_ligne
+CREATE OR REPLACE VIEW taux_remplissage_ligne AS
+WITH val_par_jour_ligne AS (
+  SELECT
+    l.id AS id_ligne,
+    l.nom AS nom_ligne,
+    date_trunc('day', v.date_heure_validation) AS jour,
+    COUNT(v.id) AS nb_validations
+  FROM validations v
+  JOIN stations s ON s.id = v.id_station
+  JOIN arrets a ON a.id_station = s.id
+  JOIN lignes l ON l.id = a.id_ligne
+  GROUP BY l.id, l.nom, date_trunc('day', v.date_heure_validation)
 ),
-trains_par_jour AS (
-    SELECT id, 
-           CASE 
-               WHEN type = 'metro' THEN 240
-               WHEN type = 'rer' THEN 64  
-           END AS nb_trains_par_jour
-    FROM lignes
+moy_val_par_ligne AS (
+  SELECT
+    id_ligne,
+    nom_ligne,
+    AVG(nb_validations) AS avg_passagers_jour
+  FROM val_par_jour_ligne
+  GROUP BY id_ligne, nom_ligne
+),
+train_count AS (
+  SELECT
+    l.id AS id_ligne,
+    l.nom AS nom_ligne,
+    CASE
+      WHEN l.moyen_transport = 'metro' THEN 205
+      WHEN l.moyen_transport = 'rer'   THEN 82
+      ELSE 1
+    END AS trains_par_jour,
+    l.capacite_max
+  FROM lignes l
 )
-SELECT l.nom AS nom_ligne, ROUND((mp.passagers_par_jour / (tpj.nb_trains_par_jour * l.capacite_max)) * 100, 2) AS taux_remplissage
-FROM moyenne_passagers mp JOIN lignes l ON mp.id_ligne = l.id
-JOIN trains_par_jour tpj ON l.id = tpj.id ORDER BY taux_remplissage DESC;
+SELECT
+  m.nom_ligne,
+  ROUND(
+    (m.avg_passagers_jour / (t.trains_par_jour * t.capacite_max)) * 100,
+    2
+  ) AS taux_remplissage
+FROM moy_val_par_ligne m
+JOIN train_count t ON t.id_ligne = m.id_ligne
+ORDER BY taux_remplissage DESC;

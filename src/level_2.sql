@@ -15,9 +15,15 @@ FROM arrets a JOIN stations s ON a.id_station = s.id JOIN lignes l ON a.id_ligne
 GROUP BY s.nom ORDER BY s.nom;
 
 -- 4
-CREATE OR REPLACE VIEW abonnes_par_departement AS SELECT ac.departement, ac.code_postal, COUNT(dc.id) AS nb_abonnes
-FROM dossiers_client dc JOIN adresses_client ac ON dc.id_adresse_residence = ac.id
-GROUP BY ac.departement, ac.code_postal ORDER BY ac.code_postal;
+CREATE OR REPLACE VIEW abonnes_par_departement AS
+SELECT
+  a.departement,
+  a.code_postal,
+  COUNT(d.id) AS nb_abonnes
+FROM dossiers_client d
+JOIN adresses_client a ON d.id_adresse_residence = a.id
+GROUP BY a.departement, a.code_postal
+ORDER BY a.code_postal;
 
 -- 5
 SELECT 
@@ -32,6 +38,15 @@ SELECT
 FROM dossiers_client;
 
 -- 6
-CREATE OR REPLACE VIEW frequentation_stations AS SELECT s.nom AS station, COUNT(v.id) AS frequentation
-FROM validations v JOIN stations s ON v.id_station = s.id
-GROUP BY s.nom ORDER BY frequentation DESC LIMIT 10;
+CREATE OR REPLACE VIEW frequentation_stations AS
+WITH freq AS (
+  SELECT s.nom AS station,
+         COUNT(v.id) AS frequentation
+  FROM validations v
+  JOIN stations s ON s.id = v.id_station
+  GROUP BY s.nom
+  ORDER BY COUNT(v.id) DESC
+  LIMIT 10
+)
+SELECT * FROM freq;
+
