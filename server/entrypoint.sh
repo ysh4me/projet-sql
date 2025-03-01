@@ -21,9 +21,6 @@ if [ -z "$DB_EXISTS" ]; then
 
   echo "Exécution du script d'initialisation (init_database.sql)..."
   psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -f /tmp/init_database.sql
-
-  echo "Exécution du script de données (data.sql)..."
-  psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -f /tmp/data.sql
 else
   echo "La base '$POSTGRES_DB' existe déjà. Pas de réinitialisation."
 fi

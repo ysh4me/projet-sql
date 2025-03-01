@@ -4,7 +4,8 @@
 ## Lancement
 ### Lancer le service PostgreSQL
 ```sh
-docker compose up -d
+cd server
+docker compose up --build -d
 ```
 
 ### Vérifier que la base tourne correctement

@@ -3,7 +3,6 @@ FROM postgres:16-alpine
 # On copie les scripts AILLEURS que /docker-entrypoint-initdb.d/
 # pour éviter qu'ils ne soient exécutés automatiquement et dans le désordre
 COPY 01-init_database.sql /docker-entrypoint-initdb.d/
-COPY 02-data.sql         /docker-entrypoint-initdb.d/
 
 # Copie du script entrypoint personnalisé
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
